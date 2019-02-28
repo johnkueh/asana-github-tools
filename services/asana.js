@@ -1,4 +1,8 @@
 import Asana from 'asana';
+import _ from 'lodash';
+import store from 'data-store';
+
+const Store = new store({ path: 'tags.json' });
 
 const client = Asana.Client.create().useAccessToken(process.env.ASANA_PATOKEN);
 
@@ -22,38 +26,29 @@ export const getTag = async () => {
   console.log(tag);
 };
 
+const tags = [
+  { name: 'Draft', color: 'light-warm-gray' },
+  { name: 'Review', color: 'light-orange' },
+  { name: 'Approved', color: 'light-green' },
+  { name: 'Staging', color: 'dark-pink' },
+  { name: 'Production', color: 'dark-purple' }
+];
+
 export const createTags = async () => {
-  const res = await Promise.all([
-    client.tags.create({
-      workspace: process.env.ASANA_WORKSPACE_ID,
-      name: 'Draft',
-      color: 'light-warm-gray'
-    }),
+  const promises = [];
+  _.each(tags, ({ name, color }) => {
+    promises.push(
+      client.tags.create({
+        workspace: process.env.ASANA_WORKSPACE_ID,
+        name: 'Draft',
+        color: 'light-warm-gray'
+      })
+    );
+  });
 
-    client.tags.create({
-      workspace: process.env.ASANA_WORKSPACE_ID,
-      name: 'Review',
-      color: 'light-orange'
-    }),
-
-    client.tags.create({
-      workspace: process.env.ASANA_WORKSPACE_ID,
-      name: 'Approved',
-      color: 'light-green'
-    }),
-
-    client.tags.create({
-      workspace: process.env.ASANA_WORKSPACE_ID,
-      name: 'Staging',
-      color: 'dark-pink'
-    }),
-
-    client.tags.create({
-      workspace: process.env.ASANA_WORKSPACE_ID,
-      name: 'Production',
-      color: 'dark-purple'
-    })
-  ]);
-
-  console.log(res);
+  const createdTags = await Promise.all(promises);
+  Store.set({
+    tags: createdTags
+  });
+  console.log('Created and stored tags');
 };

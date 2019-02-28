@@ -29,10 +29,16 @@
   },
   "dependencies": {
     "asana": "^0.16.6",
+    "data-store": "^3.1.0",
     "dotenv": "^6.1.0",
     "express": "^4.16.4",
     "lodash": "^4.17.11",
     "pg": "^7.8.0",
     "pg-hstore": "^2.3.2"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "tags.json"
+    ]
   }
 }
