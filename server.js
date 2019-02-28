@@ -1,10 +1,14 @@
-var express = require('express');
-var app = express();
+import 'dotenv/config';
+import express from 'express';
 
-app.get('/', function(req, res) {
+const app = express();
+
+app.get('/', (req, res) => {
   res.send('hello world');
 });
 
 app.listen({ port: 8000 }, () => {
   console.log('Node Server on http://localhost:8000');
 });
+
+console.log(process.env);
