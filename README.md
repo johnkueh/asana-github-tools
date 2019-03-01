@@ -4,7 +4,7 @@
 
 Automatically assign Task numbers to newly created Asana cards (eg. FR-1)
 
-![Image of Task numbers](https://res.cloudinary.com/beaconmaker/image/upload/v1551416831/2019-03-01_16.06.07_uy4u8s.gif | width=400)
+<img src="https://res.cloudinary.com/beaconmaker/image/upload/v1551416831/2019-03-01_16.06.07_uy4u8s.gif" alt="Image of Task numbers" width="600" />
 
 ### Asana/Github Sync
 
