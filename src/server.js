@@ -3,6 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { handleHooks } from './services/asana';
 
+const PORT = process.env.PORT || 8000;
 const app = express();
 
 app.use(bodyParser.raw({ type: '*/*' }));
@@ -19,6 +20,6 @@ app.post('/webhooks/asana', (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen({ port: 8000 }, () => {
-  console.log('Node Server on http://localhost:8000');
+app.listen({ port: PORT }, () => {
+  console.log(`Server runnning on http://localhost:${PORT}`);
 });
