@@ -3,7 +3,8 @@ import Asana from 'asana';
 import _ from 'lodash';
 import store from 'data-store';
 
-const Store = new store({ path: 'tags.json' });
+const TagsStore = new store({ path: 'data/tags.json' });
+const TasksStore = new store({ path: 'data/tasks.json' });
 
 const client = Asana.Client.create().useAccessToken(process.env.ASANA_PATOKEN);
 
@@ -48,8 +49,61 @@ export const createTags = async () => {
   });
 
   const createdTags = await Promise.all(promises);
-  Store.set({
+  TagsStore.set({
     tags: createdTags
   });
   console.log('Created and stored tags');
+};
+
+export const getHooks = async () => {
+  return client.webhooks.getAll(process.env.ASANA_WORKSPACE_ID, {
+    resource: process.env.ASANA_PROJECT_ID
+  });
+};
+
+export const createHooks = async () => {
+  return client.webhooks.create(
+    process.env.ASANA_PROJECT_ID,
+    `${process.env.BASE_URL}/webhooks/asana`
+  );
+};
+
+export const getTask = async gid => {
+  return client.tasks.findById(gid);
+};
+
+// Handling hooks
+export const handleHooks = req => {
+  // console.log('--- Incoming Asana webhook ---');
+  const body = JSON.parse(req.body);
+  let number = TasksStore.get('number') || 0;
+
+  _.each(body.events, (event, i) => {
+    const { user, created_at: createdAt, action, resource = {}, parent = {} } = event;
+    if (resource && parent) {
+      const { gid, resource_type: resourceType } = resource;
+      const { resource_type: parentResourceType } = parent;
+
+      if (action === 'added' && resourceType === 'task' && parentResourceType === 'project') {
+        number += 1;
+        handleTaskCreated({
+          gid,
+          number
+        });
+      }
+    }
+  });
+
+  TasksStore.set('number', number);
+  // console.log('--- End Asana webhook ---');
+};
+
+export const handleTaskCreated = async ({ gid, number }) => {
+  const task = await getTask(gid);
+  const { name } = task;
+  const updatedName = `[${process.env.ASANA_PROJECT_PREFIX}-${number}] ${name}`;
+  await client.tasks.update(gid, {
+    name: updatedName
+  });
+  // console.log(`Updated task - ${updatedName}`);
 };

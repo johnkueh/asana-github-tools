@@ -4,8 +4,10 @@
   "description": "Sync Asana and Github",
   "main": "index.js",
   "scripts": {
-    "tunnel": "ssh -R zapcms.serveo.net:80:localhost:8000 serveo.net",
-    "setup": "babel-node setup.js",
+    "tunnel": "ssh -R featureready.serveo.net:80:localhost:8000 serveo.net",
+    "setup-tags": "babel-node tasks/setupTags.js",
+    "list-hooks": "babel-node tasks/getHooks.js",
+    "setup-hooks": "babel-node tasks/setupHooks.js",
     "start": "nodemon --exec babel-node server.js"
   },
   "author": "John Kueh",
@@ -29,6 +31,7 @@
   },
   "dependencies": {
     "asana": "^0.16.6",
+    "body-parser": "^1.18.3",
     "data-store": "^3.1.0",
     "dotenv": "^6.1.0",
     "express": "^4.16.4",
@@ -38,7 +41,7 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "tags.json"
+      "data/*.json"
     ]
   }
 }
