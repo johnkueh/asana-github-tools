@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import express from 'express';
-import { getMe, getTag, getTags, createTags } from './services/asana';
 
 const app = express();
 

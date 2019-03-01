@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import Asana from 'asana';
 import _ from 'lodash';
 import store from 'data-store';

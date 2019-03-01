@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "tunnel": "ssh -R zapcms.serveo.net:80:localhost:8000 serveo.net",
-    "console": "nodemon --exec babel-node console.js",
+    "setup": "babel-node setup.js",
     "start": "nodemon --exec babel-node server.js"
   },
   "author": "John Kueh",
