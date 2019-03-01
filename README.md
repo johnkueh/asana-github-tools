@@ -1,11 +1,20 @@
 # Asana and Github tools for better project management.
 
-**_Features:_**
+### Asana Task ID
 
-1. Asana Task ID - Automatically assign Task numbers to newly created Asana cards (eg. FR-1)
-2. Asana/Github Sync - Automatically assign and update card status (Draft, Review, Approved, Staging, Production) based on a Github Pull Request's status (Coming soon).
+Automatically assign Task numbers to newly created Asana cards (eg. FR-1)
 
-**_Getting started:_**
+<img src="https://res.cloudinary.com/beaconmaker/image/upload/v1551416831/2019-03-01_16.06.07_uy4u8s.gif" alt="Image of Task numbers" width="600" />
+
+### Asana/Github Sync
+
+Automatically assign and update card status (Draft, Review, Approved, Staging, Production) based on a Github Pull Request's status 
+
+
+(Coming soon).
+
+
+## Getting started (run locally):
 
 1. Add the following variables into a .env file in the root folder of this app:
 
@@ -22,10 +31,21 @@ ASANA_PROJECT_ID=1111222224444444
 ASANA_PROJECT_PREFIX=FR
 ```
 
-2. Run `npm setup-tags` to setup all the required tags/custom-fields on your Asana project
+2. Run `npm run setup-tags` to setup all the required tags/custom-fields on your Asana project
 
-3. Run `npm setup-hooks` to setup all required hooks when creating a task etc
+3. Run `npm run setup-hooks` to setup all required hooks when creating a task etc
 
-**_Useful commands_**
+4. Run `npm run dev` to start the server locally
+
+## Getting started (deploy to Heroku):
+
+1. Clone this repo to your local machine
+2. Create a new Heroku app
+3. Push this repo to your newly created Heroku app (take note of the app's URL eg. https://featureready.herokuapp.com)
+4. Add the config vars above to your app's Heroku dashboard > Settings, adding the URL from #3 to BASE_URL
+5. Run `heroku run npm run setup-tags`
+6. Run `heroku run npm run setup-hooks`
+
+## Useful commands:
 
 `npm list-hooks` - lists all hooks on Asana
