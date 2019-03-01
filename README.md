@@ -1,4 +1,4 @@
-# FeatureReady - Asana and Github tools to get your feature ready!
+# Asana and Github tools for better project management.
 
 **_Features:_**
 
