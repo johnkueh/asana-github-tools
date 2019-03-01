@@ -104,8 +104,8 @@ export const handleTaskCreated = async ({ gid, number }) => {
     name: updatedName
   });
 
+  const draftTag = _.find(store.get('tags'), { name: 'Draft' });
   client.tasks.addTag(gid, {
-    tag: '1'
+    tag: draftTag.gid
   });
-  // console.log(`Updated task - ${updatedName}`);
 };
