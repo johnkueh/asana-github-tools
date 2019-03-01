@@ -1,0 +1,84 @@
+{
+  "tags": [
+    {
+      "gid": "1112123985359600",
+      "id": 1112123985359600,
+      "resource_type": "tag",
+      "created_at": "2019-03-01T03:46:29.489Z",
+      "name": "Draft",
+      "notes": "",
+      "workspace": {
+        "gid": "1111649332019027",
+        "id": 1111649332019027,
+        "resource_type": "workspace",
+        "name": "featureready.com"
+      },
+      "color": "light-warm-gray",
+      "followers": []
+    },
+    {
+      "gid": "1112123987091028",
+      "id": 1112123987091028,
+      "resource_type": "tag",
+      "created_at": "2019-03-01T03:46:29.436Z",
+      "name": "Draft",
+      "notes": "",
+      "workspace": {
+        "gid": "1111649332019027",
+        "id": 1111649332019027,
+        "resource_type": "workspace",
+        "name": "featureready.com"
+      },
+      "color": "light-warm-gray",
+      "followers": []
+    },
+    {
+      "gid": "1112124002339221",
+      "id": 1112124002339221,
+      "resource_type": "tag",
+      "created_at": "2019-03-01T03:46:29.366Z",
+      "name": "Draft",
+      "notes": "",
+      "workspace": {
+        "gid": "1111649332019027",
+        "id": 1111649332019027,
+        "resource_type": "workspace",
+        "name": "featureready.com"
+      },
+      "color": "light-warm-gray",
+      "followers": []
+    },
+    {
+      "gid": "1112123999318404",
+      "id": 1112123999318404,
+      "resource_type": "tag",
+      "created_at": "2019-03-01T03:46:29.344Z",
+      "name": "Draft",
+      "notes": "",
+      "workspace": {
+        "gid": "1111649332019027",
+        "id": 1111649332019027,
+        "resource_type": "workspace",
+        "name": "featureready.com"
+      },
+      "followers": [],
+      "color": "light-warm-gray"
+    },
+    {
+      "gid": "1112123995682809",
+      "id": 1112123995682809,
+      "resource_type": "tag",
+      "created_at": "2019-03-01T03:46:29.338Z",
+      "name": "Draft",
+      "notes": "",
+      "workspace": {
+        "gid": "1111649332019027",
+        "id": 1111649332019027,
+        "resource_type": "workspace",
+        "name": "featureready.com"
+      },
+      "color": "light-warm-gray",
+      "followers": []
+    }
+  ]
+}

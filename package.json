@@ -5,17 +5,18 @@
   "main": "index.js",
   "scripts": {
     "tunnel": "ssh -R featureready.serveo.net:80:localhost:8000 serveo.net",
-    "setup-tags": "babel-node tasks/setupTags.js",
-    "list-hooks": "babel-node tasks/getHooks.js",
-    "setup-hooks": "babel-node tasks/setupHooks.js",
-    "start": "nodemon --exec babel-node server.js"
+    "setup-tags": "babel-node src/tasks/setupTags.js",
+    "list-hooks": "babel-node src/tasks/getHooks.js",
+    "setup-hooks": "babel-node src/tasks/setupHooks.js",
+    "start": "nodemon --exec babel-node src/server.js",
+    "clean": "rm -rf build && mkdir build",
+    "build-babel": "babel -d ./build ./src -s",
+    "build": "npm run clean && npm run build-babel",
+    "start-server": "npm run build && node ./build/index.js"
   },
   "author": "John Kueh",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/node": "^7.2.2",
-    "@babel/preset-env": "^7.3.1",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.6.0",
     "eslint-config-airbnb": "^17.1.0",
@@ -30,6 +31,10 @@
     "prettier": "^1.16.4"
   },
   "dependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
     "asana": "^0.16.6",
     "body-parser": "^1.18.3",
     "data-store": "^3.1.0",
