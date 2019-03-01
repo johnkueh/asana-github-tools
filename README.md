@@ -2,12 +2,17 @@
 
 **_Features:_**
 
-1. Asana Task ID
+### Asana Task ID
 
 Automatically assign Task numbers to newly created Asana cards (eg. FR-1)
+
 ![Image of Task numbers](https://res.cloudinary.com/beaconmaker/image/upload/v1551416382/Asana_Task_ID_-_GIF_hvayy1.gif)
 
-2. Asana/Github Sync - Automatically assign and update card status (Draft, Review, Approved, Staging, Production) based on a Github Pull Request's status (Coming soon).
+### Asana/Github Sync
+
+Automatically assign and update card status (Draft, Review, Approved, Staging, Production) based on a Github Pull Request's status 
+
+(Coming soon).
 
 **_Getting started (run locally):_**
 
