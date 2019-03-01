@@ -12,7 +12,7 @@
     "clean": "rm -rf build && mkdir build",
     "build-babel": "babel -d ./build ./src -s",
     "build": "npm run clean && npm run build-babel",
-    "start-server": "npm run build && node ./build/index.js"
+    "start-server": "npm run build && node ./build/server.js"
   },
   "author": "John Kueh",
   "license": "MIT",
