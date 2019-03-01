@@ -1,7 +1,5 @@
 # Asana and Github tools for better project management.
 
-**_Features:_**
-
 ### Asana Task ID
 
 Automatically assign Task numbers to newly created Asana cards (eg. FR-1)
@@ -12,9 +10,11 @@ Automatically assign Task numbers to newly created Asana cards (eg. FR-1)
 
 Automatically assign and update card status (Draft, Review, Approved, Staging, Production) based on a Github Pull Request's status 
 
+
 (Coming soon).
 
-**_Getting started (run locally):_**
+
+## Getting started (run locally):
 
 1. Add the following variables into a .env file in the root folder of this app:
 
@@ -37,7 +37,7 @@ ASANA_PROJECT_PREFIX=FR
 
 4. Run `npm run dev` to start the server locally
 
-**_Getting started (deploy to Heroku):_**
+## Getting started (deploy to Heroku):
 
 1. Clone this repo to your local machine
 2. Create a new Heroku app
@@ -46,6 +46,6 @@ ASANA_PROJECT_PREFIX=FR
 5. Run `heroku run npm run setup-tags`
 6. Run `heroku run npm run setup-hooks`
 
-**_Useful commands_**
+## Useful commands:
 
 `npm list-hooks` - lists all hooks on Asana
