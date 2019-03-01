@@ -1,9 +1,9 @@
-# Asana - Github Tools
+# FeatureReady - Asana and Github tools to get your feature ready!
 
 **_Features:_**
 
-1. Automatically assign Task numbers to newly created Asana cards (eg. FR-1)
-2. [Coming Soon] - Automatically assign and update card status (Draft, Review, Approved, Staging, Production) based on a Github Pull Request's status.
+1. Asana Task ID - Automatically assign Task numbers to newly created Asana cards (eg. FR-1)
+2. Asana/Github Sync - Automatically assign and update card status (Draft, Review, Approved, Staging, Production) based on a Github Pull Request's status (Coming soon).
 
 **_Getting started:_**
 
@@ -27,4 +27,5 @@ ASANA_PROJECT_PREFIX=FR
 3. Run `npm setup-hooks` to setup all required hooks when creating a task etc
 
 **_Useful commands_**
+
 `npm list-hooks` - lists all hooks on Asana
