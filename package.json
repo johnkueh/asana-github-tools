@@ -8,11 +8,13 @@
     "setup-tags": "babel-node src/tasks/setupTags.js",
     "list-hooks": "babel-node src/tasks/getHooks.js",
     "setup-hooks": "babel-node src/tasks/setupHooks.js",
+    "setup": "setup-tags && setup-hooks",
     "dev": "nodemon --exec babel-node src/server.js",
     "clean": "rm -rf build && mkdir build",
     "build-babel": "babel -d ./build ./src -s",
     "build": "npm run clean && npm run build-babel",
-    "start": "npm run build && node ./build/server.js"
+    "start": "npm run build && node ./build/server.js",
+    "console": "babel-node src/console.js"
   },
   "author": "John Kueh",
   "license": "MIT",
@@ -46,7 +48,7 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "data/*.json"
+      "store.json"
     ]
   }
 }

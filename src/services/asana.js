@@ -1,11 +1,9 @@
 import 'dotenv/config';
 import Asana from 'asana';
 import _ from 'lodash';
-import store from 'data-store';
+import Store from 'data-store';
 
-const TagsStore = new store({ path: 'data/tags.json' });
-const TasksStore = new store({ path: 'data/tasks.json' });
-
+const store = new Store({ path: 'store.json' });
 const client = Asana.Client.create().useAccessToken(process.env.ASANA_PATOKEN);
 
 export const getMe = async () => {
@@ -49,7 +47,7 @@ export const createTags = async () => {
   });
 
   const createdTags = await Promise.all(promises);
-  TagsStore.set({
+  store.set({
     tags: createdTags
   });
   console.log('Created and stored tags');
@@ -76,7 +74,7 @@ export const getTask = async gid => {
 export const handleHooks = req => {
   // console.log('--- Incoming Asana webhook ---');
   const body = JSON.parse(req.body);
-  let number = TasksStore.get('number') || 0;
+  let number = store.get('number') || 0;
 
   _.each(body.events, (event, i) => {
     const { user, created_at: createdAt, action, resource = {}, parent = {} } = event;
@@ -94,7 +92,7 @@ export const handleHooks = req => {
     }
   });
 
-  TasksStore.set('number', number);
+  store.set('number', number);
   // console.log('--- End Asana webhook ---');
 };
 
@@ -104,6 +102,10 @@ export const handleTaskCreated = async ({ gid, number }) => {
   const updatedName = `[${process.env.ASANA_PROJECT_PREFIX}-${number}] ${name}`;
   await client.tasks.update(gid, {
     name: updatedName
+  });
+
+  client.tasks.addTag(gid, {
+    tag: '1'
   });
   // console.log(`Updated task - ${updatedName}`);
 };
