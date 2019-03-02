@@ -62,26 +62,33 @@ export const getTask = async gid => {
   return client.tasks.findById(gid);
 };
 
-export const getCurrentTaskId = async () => {
-  const project = await client.projects.findById(process.env.ASANA_PROJECT_ID);
+export const getCurrentIdFromProject = project => {
   const regex = /\[currentTaskId:(.+?)\]/;
-  const taskId = project.notes.match(regex)[1] || 0;
-  return parseInt(taskId, 10);
+  const match = project.notes.match(regex);
+  if (match) {
+    return parseInt(match[1], 10);
+  }
+
+  return 0;
 };
 
-export const setNextTaskId = async number => {
+export const getCurrentTaskId = async () => {
   const project = await client.projects.findById(process.env.ASANA_PROJECT_ID);
-  const regex = /\[currentTaskId:(.+?)\]/;
-  const match = project.notes.match(regex)[1];
+  return getCurrentIdFromProject(project);
+};
 
-  let updatedNotes = `[currentTaskId: ${number}]`;
+export const setCurrentTaskId = async number => {
+  const project = await client.projects.findById(process.env.ASANA_PROJECT_ID);
+  const currentId = getCurrentIdFromProject(project);
+  const current = `[currentTaskId: ${currentId}]`;
+  let updated = `[currentTaskId: ${number}]`;
 
-  if (match) {
-    updatedNotes = project.notes.replace(`[currentTaskId: ${match}]`, `[currentTaskId: ${number}]`);
+  if (currentId > 0) {
+    updated = project.notes.replace(current, updated);
   }
 
   await client.projects.update(process.env.ASANA_PROJECT_ID, {
-    notes: updatedNotes
+    notes: updated
   });
 };
 
@@ -113,7 +120,7 @@ export const handleHooks = async req => {
     }
   });
 
-  await setNextTaskId(number);
+  setCurrentTaskId(number);
   // console.log('--- End Asana webhook ---');
 };
 
