@@ -1,10 +1,8 @@
 import 'dotenv/config';
 import Asana from 'asana';
 import _ from 'lodash';
-import Store from 'data-store';
 
-const store = new Store({ path: 'store.json' });
-const client = Asana.Client.create().useAccessToken(process.env.ASANA_PATOKEN);
+export const client = Asana.Client.create().useAccessToken(process.env.ASANA_PATOKEN);
 
 export const getMe = async () => {
   const user = await client.users.me();
@@ -46,11 +44,8 @@ export const createTags = async () => {
     );
   });
 
-  const createdTags = await Promise.all(promises);
-  store.set({
-    tags: createdTags
-  });
-  console.log('Created and stored tags');
+  await Promise.all(promises);
+  console.log('Created tags');
 };
 
 export const getHooks = async () => {
@@ -70,11 +65,31 @@ export const getTask = async gid => {
   return client.tasks.findById(gid);
 };
 
+export const getCurrentTaskId = async () => {
+  const project = await client.projects.findById(process.env.ASANA_PROJECT_ID);
+  const regex = /\[currentTaskId:(.+?)\]/;
+  const taskId = project.notes.match(regex)[1] || 0;
+  return parseInt(taskId, 10);
+};
+
+export const setNextTaskId = async number => {
+  const project = await client.projects.findById(process.env.ASANA_PROJECT_ID);
+  const regex = /\[currentTaskId:(.+?)\]/;
+  const taskId = parseInt(project.notes.match(regex)[1] || 0, 10);
+  const updatedNotes = project.notes.replace(
+    `[currentTaskId: ${taskId}]`,
+    `[currentTaskId: ${number}]`
+  );
+  await client.projects.update(process.env.ASANA_PROJECT_ID, {
+    notes: updatedNotes
+  });
+};
+
 // Handling hooks
-export const handleHooks = req => {
+export const handleHooks = async req => {
   // console.log('--- Incoming Asana webhook ---');
   const body = JSON.parse(req.body);
-  let number = store.get('number') || 0;
+  let number = await getCurrentTaskId();
 
   _.each(body.events, (event, i) => {
     const { user, created_at: createdAt, action, resource = {}, parent = {} } = event;
@@ -92,7 +107,7 @@ export const handleHooks = req => {
     }
   });
 
-  store.set('number', number);
+  await setNextTaskId(number);
   // console.log('--- End Asana webhook ---');
 };
 
@@ -104,8 +119,8 @@ export const handleTaskCreated = async ({ gid, number }) => {
     name: updatedName
   });
 
-  const draftTag = _.find(store.get('tags'), { name: 'Draft' });
-  client.tasks.addTag(gid, {
-    tag: draftTag.gid
-  });
+  // const draftTag = _.find(store.get('tags'), { name: 'Draft' });
+  // client.tasks.addTag(gid, {
+  //   tag: draftTag.gid
+  // });
 };
