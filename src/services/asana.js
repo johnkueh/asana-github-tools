@@ -89,9 +89,9 @@ export const setNextTaskId = async number => {
 export const handleHooks = async req => {
   // console.log('--- Incoming Asana webhook ---');
   const body = JSON.parse(req.body);
-  const tags = await client.tags.findByWorkspace(process.env.ASANA_WORKSPACE_ID);
-  const draftTag = _.find(tags, { name: 'Draft' });
-  console.log(draftTag);
+  // const tags = await client.tags.findByWorkspace(process.env.ASANA_WORKSPACE_ID);
+  // const draftTag = _.find(tags, { name: 'Draft' });
+  // console.log(draftTag);
   let number = await getCurrentTaskId();
 
   _.each(body.events, (event, i) => {
@@ -106,9 +106,9 @@ export const handleHooks = async req => {
           gid,
           number
         });
-        client.tasks.addTag(gid, {
-          tag: draftTag.gid
-        });
+        // client.tasks.addTag(gid, {
+        //   tag: draftTag.gid
+        // });
       }
     }
   });
