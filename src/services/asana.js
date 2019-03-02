@@ -24,7 +24,7 @@ export const getTag = async () => {
   console.log(tag);
 };
 
-const tags = [
+const tagsTemplate = [
   { name: 'Draft', color: 'light-warm-gray' },
   { name: 'Review', color: 'light-orange' },
   { name: 'Approved', color: 'light-green' },
@@ -34,7 +34,7 @@ const tags = [
 
 export const createTags = async () => {
   const promises = [];
-  _.each(tags, ({ name, color }) => {
+  _.each(tagsTemplate, ({ name, color }) => {
     promises.push(
       client.tags.create({
         workspace: process.env.ASANA_WORKSPACE_ID,
@@ -55,10 +55,7 @@ export const getHooks = async () => {
 };
 
 export const createHooks = async () => {
-  return client.webhooks.create(
-    process.env.ASANA_PROJECT_ID,
-    `${process.env.BASE_URL}/webhooks/asana`
-  );
+  client.webhooks.create(process.env.ASANA_PROJECT_ID, `${process.env.BASE_URL}/webhooks/asana`);
 };
 
 export const getTask = async gid => {
@@ -75,11 +72,14 @@ export const getCurrentTaskId = async () => {
 export const setNextTaskId = async number => {
   const project = await client.projects.findById(process.env.ASANA_PROJECT_ID);
   const regex = /\[currentTaskId:(.+?)\]/;
-  const taskId = parseInt(project.notes.match(regex)[1] || 0, 10);
-  const updatedNotes = project.notes.replace(
-    `[currentTaskId: ${taskId}]`,
-    `[currentTaskId: ${number}]`
-  );
+  const match = project.notes.match(regex)[1];
+
+  let updatedNotes = `[currentTaskId: ${number}]`;
+
+  if (match) {
+    updatedNotes = project.notes.replace(`[currentTaskId: ${match}]`, `[currentTaskId: ${number}]`);
+  }
+
   await client.projects.update(process.env.ASANA_PROJECT_ID, {
     notes: updatedNotes
   });
@@ -89,6 +89,9 @@ export const setNextTaskId = async number => {
 export const handleHooks = async req => {
   // console.log('--- Incoming Asana webhook ---');
   const body = JSON.parse(req.body);
+  const tags = await client.tags.findByWorkspace(process.env.ASANA_WORKSPACE_ID);
+  const draftTag = _.find(tags, { name: 'Draft' });
+  console.log(draftTag);
   let number = await getCurrentTaskId();
 
   _.each(body.events, (event, i) => {
@@ -102,6 +105,9 @@ export const handleHooks = async req => {
         handleTaskCreated({
           gid,
           number
+        });
+        client.tasks.addTag(gid, {
+          tag: draftTag.gid
         });
       }
     }
