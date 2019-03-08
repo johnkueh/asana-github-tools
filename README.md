@@ -33,17 +33,19 @@ STAGING_BRANCH_NAME=develop
 GITHUB_PATOKEN=GGGG
 GITHUB_OWNER_NAME=yoongfook
 GITHUB_REPO_NAME=featureready
+GITHUB_WEBHOOK_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxx
 ASANA_PATOKEN=0/9cccccccccccccccccccccccccccc
 ASANA_WORKSPACE_ID=111122222223333333
 ASANA_PROJECT_ID=1111222224444444
 ASANA_PROJECT_PREFIX=FR
+ASANA_CUSTOM_FIELD_NAME=Stage
 ```
 
 2. Run `npm run setup-custom-fields` to setup all the required custom-fields on your Asana project (Asana Premium required)
 
-3. Run `npm run setup-hooks` to setup all required hooks when creating a task etc
-
-4. Run `npm run dev` to start the server locally
+3. Run `npm run setup-asana-hooks` to setup all required hooks when creating a task etc
+4. Run `npm run setup-github-hooks` to setup all required GitHub hooks when adding a commit, creating pull requests, etc
+5. Run `npm run dev` to start the server locally
 
 ## Getting started (deploy to Heroku):
 
