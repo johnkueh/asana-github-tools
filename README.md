@@ -10,6 +10,7 @@ Automatically assign Task numbers to newly created Asana cards (eg. FR-1)
 
 Automatically assign and update card status (Draft, Review, Approved, Staging, Production) based on a Github Pull Request's status 
 
+<img src="https://res.cloudinary.com/beaconmaker/image/upload/v1552005620/Screen_Shot_2019-03-08_at_11.39.25_am_alvifk.png" alt="Image of Task Status" width="600" />
 
 (Coming soon).
 
