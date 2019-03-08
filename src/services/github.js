@@ -79,7 +79,7 @@ export const handleCommit = async ({ ref, commits }) => {
   // Dont handle direct commits / merges to the production and staging branches
   const excludedRefs = _.map(
     [process.env.PRODUCTION_BRANCH_NAME, process.env.STAGING_BRANCH_NAME],
-    name => `/refs/heads/${name}`
+    name => `refs/heads/${name}`
   );
   if (_.includes(excludedRefs, ref)) {
     return;
