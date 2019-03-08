@@ -56,8 +56,12 @@ export const getTask = async gid => {
 };
 
 export const searchTask = async text => {
-  return client.tasks.search(process.env.ASANA_WORKSPACE_ID, {
-    text
+  return client.tasks.search(process.env.ASANA_WORKSPACE_ID, { text });
+};
+
+export const addCommentToTask = async ({ gid, htmlText }) => {
+  client.tasks.addComment(gid, {
+    html_text: htmlText
   });
 };
 
@@ -121,6 +125,15 @@ export const handleHooks = async req => {
 
   setCurrentTaskId(number);
   // console.log('--- End Asana webhook ---');
+};
+
+export const getCustomField = async customFields => {
+  return _.find(customFields, { name: process.env.ASANA_CUSTOM_FIELD_NAME });
+};
+
+export const getCustomFieldOption = ({ name, field }) => {
+  const { enum_options: enumOptions } = field;
+  return _.find(enumOptions, { name });
 };
 
 export const handleTaskCreated = async ({ gid, number }) => {
