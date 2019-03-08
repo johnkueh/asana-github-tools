@@ -31,7 +31,9 @@ export const createHook = async () => {
 
 export const handleHooks = req => {
   const body = JSON.parse(req.body);
-  console.log('github webhook', body);
+  const type = req.headers['x-github-event'];
+  console.log('Github webhook - ', type);
+  // console.log('github webhook', body);
 };
 
 export const verifyGitHub = req => {
