@@ -62,6 +62,12 @@ export const getTask = async gid => {
   return client.tasks.findById(gid);
 };
 
+export const searchTask = async text => {
+  return client.tasks.search(process.env.ASANA_WORKSPACE_ID, {
+    text
+  });
+};
+
 export const getCurrentIdFromProject = project => {
   const regex = /\[currentTaskId:(.+?)\]/;
   const match = project.notes.match(regex);
