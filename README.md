@@ -8,8 +8,11 @@ Automatically assign Task numbers to newly created Asana cards (eg. FR-1)
 
 ### Asana/Github Sync
 
+#### Note: You will need an Asana Premium account to use this feature. Asana Basic does not have access to custom fields and tasks search 😤
+
 Automatically assign and update card status (Draft, Review, Approved, Staging, Production) based on a Github Pull Request's status 
 
+<img src="https://res.cloudinary.com/beaconmaker/image/upload/v1552005620/Screen_Shot_2019-03-08_at_11.39.25_am_alvifk.png" alt="Image of Task Status" width="600" />
 
 (Coming soon).
 
