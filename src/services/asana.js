@@ -23,7 +23,7 @@ export const setupCustomFields = async () => {
   const field = await client.customFields.create({
     workspace: process.env.ASANA_WORKSPACE_ID,
     resource_subtype: 'enum',
-    name: 'Stage',
+    name: process.env.ASANA_CUSTOM_FIELD_NAME,
     description: 'The current stage of this feature',
     enum_options: [
       { name: 'Draft', color: 'cool-gray' },
@@ -127,12 +127,15 @@ export const handleTaskCreated = async ({ gid, number }) => {
   const task = await getTask(gid);
   const { name } = task;
   const updatedName = `[${process.env.ASANA_PROJECT_PREFIX}-${number}] ${name}`;
-  await client.tasks.update(gid, {
-    name: updatedName
-  });
+  const field = _.find(task.custom_fields, { name: process.env.ASANA_CUSTOM_FIELD_NAME });
+  const { enum_options: enumOptions, enum_value: enumValue, gid: customFieldGid } = field;
+  const draftOption = _.find(enumOptions, { name: 'Draft' });
 
-  // const draftTag = _.find(store.get('tags'), { name: 'Draft' });
-  // client.tasks.addTag(gid, {
-  //   tag: draftTag.gid
-  // });
+  // Update with 'Draft' stage
+  await client.tasks.update(gid, {
+    name: updatedName,
+    custom_fields: {
+      [customFieldGid]: draftOption.gid
+    }
+  });
 };
