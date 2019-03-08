@@ -51,7 +51,7 @@ export const handleHooks = req => {
         const taskId = findTaskId(commit.message);
         if (taskId) {
           const asanaTask = await searchTask(taskId);
-          console.log(asanaTask);
+          console.log('asanaTask', asanaTask);
         }
         console.log('taskId', findTaskId(commit.message));
       });
