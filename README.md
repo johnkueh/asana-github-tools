@@ -10,12 +10,11 @@ Automatically assign Task numbers to newly created Asana cards (eg. FR-1)
 
 #### Note: You will need an Asana Premium account to use this feature. Asana Basic does not have access to custom fields and tasks search 😤
 
-Automatically assign and update card status (Draft, Review, Approved, Staging, Production) based on a Github Pull Request's status 
+Automatically assign and update card status (Draft, Review, Approved, Staging, Production) based on a Github Pull Request's status
 
 <img src="https://res.cloudinary.com/beaconmaker/image/upload/v1552005620/Screen_Shot_2019-03-08_at_11.39.25_am_alvifk.png" alt="Image of Task Status" width="600" />
 
 (Coming soon).
-
 
 ## Getting started (run locally):
 
@@ -34,7 +33,7 @@ ASANA_PROJECT_ID=1111222224444444
 ASANA_PROJECT_PREFIX=FR
 ```
 
-2. Run `npm run setup-tags` to setup all the required tags/custom-fields on your Asana project
+2. Run `npm run setup-custom-fields` to setup all the required custom-fields on your Asana project (Asana Premium required)
 
 3. Run `npm run setup-hooks` to setup all required hooks when creating a task etc
 
