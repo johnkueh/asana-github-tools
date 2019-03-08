@@ -14,38 +14,31 @@ export const getWorkspace = async () => {
   console.log(workspace);
 };
 
-export const getTags = async () => {
-  const tags = await client.tags.findByWorkspace(process.env.ASANA_WORKSPACE_ID);
-  console.log(tags.data.length);
+export const getCustomFields = async () => {
+  const fields = await client.customFields.findByWorkspace(process.env.ASANA_WORKSPACE_ID);
+  console.log(fields.data.length);
 };
 
-export const getTag = async () => {
-  const tag = await client.tags.findById('1111933750584387');
-  console.log(tag);
-};
-
-const tagsTemplate = [
-  { name: 'Draft', color: 'light-warm-gray' },
-  { name: 'Review', color: 'light-orange' },
-  { name: 'Approved', color: 'light-green' },
-  { name: 'Staging', color: 'dark-pink' },
-  { name: 'Production', color: 'dark-purple' }
-];
-
-export const createTags = async () => {
-  const promises = [];
-  _.each(tagsTemplate, ({ name, color }) => {
-    promises.push(
-      client.tags.create({
-        workspace: process.env.ASANA_WORKSPACE_ID,
-        name: 'Draft',
-        color: 'light-warm-gray'
-      })
-    );
+export const setupCustomFields = async () => {
+  const field = await client.customFields.create({
+    workspace: process.env.ASANA_WORKSPACE_ID,
+    resource_subtype: 'enum',
+    name: 'Stage',
+    description: 'The current stage of this feature',
+    enum_options: [
+      { name: 'Draft', color: 'cool-gray' },
+      { name: 'Review', color: 'yellow' },
+      { name: 'Approved', color: 'green' },
+      { name: 'Staging', color: 'magenta' },
+      { name: 'Production', color: 'indigo' }
+    ]
+  });
+  await client.projects.addCustomFieldSetting(process.env.ASANA_PROJECT_ID, {
+    custom_field: field.gid,
+    is_important: true
   });
 
-  await Promise.all(promises);
-  console.log('Created tags');
+  console.log('Successfully created custom fields and added to project');
 };
 
 export const getHooks = async () => {
@@ -102,8 +95,9 @@ export const setCurrentTaskId = async number => {
 export const handleHooks = async req => {
   // console.log('--- Incoming Asana webhook ---');
   const body = JSON.parse(req.body);
-  const res = await client.tags.findByWorkspace(process.env.ASANA_WORKSPACE_ID);
-  const draftTag = _.find(res.data, { name: 'Draft' });
+  // const res = await client.tags.findByWorkspace(process.env.ASANA_WORKSPACE_ID);
+  // const draftTag = _.find(res.data, { name: 'Draft' });
+
   let number = await getCurrentTaskId();
 
   _.each(body.events, (event, i) => {
@@ -118,9 +112,9 @@ export const handleHooks = async req => {
           gid,
           number
         });
-        client.tasks.addTag(gid, {
-          tag: draftTag.gid
-        });
+        // client.tasks.addTag(gid, {
+        //   tag: draftTag.gid
+        // });
       }
     }
   });

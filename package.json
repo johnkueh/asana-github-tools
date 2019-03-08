@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "tunnel": "ssh -R featureready.serveo.net:80:localhost:8000 serveo.net",
-    "setup-tags": "babel-node src/tasks/setupTags.js",
+    "setup-custom-fields": "babel-node src/tasks/setupCustomFields.js",
     "list-hooks": "babel-node src/tasks/getHooks.js",
     "setup-hooks": "babel-node src/tasks/setupHooks.js",
     "setup": "setup-tags && setup-hooks",
