@@ -61,6 +61,12 @@ export const searchTask = async text => {
   });
 };
 
+export const addCommentToTask = async ({ gid, htmlText }) => {
+  client.tasks.addComment(gid, {
+    html_text: htmlText
+  });
+};
+
 export const getCurrentIdFromProject = project => {
   const regex = /\[currentTaskId:(.+?)\]/;
   const match = project.notes.match(regex);

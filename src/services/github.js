@@ -2,7 +2,7 @@ import 'dotenv/config';
 import _ from 'lodash';
 import Octokit from '@octokit/rest';
 import crypto from 'crypto';
-import { searchTask } from '../services/asana';
+import { searchTask, addCommentToTask } from './asana';
 
 const octokit = new Octokit({
   auth: `token ${process.env.GITHUB_PATOKEN}`
@@ -43,17 +43,25 @@ const findTaskId = commitMessage => {
 export const handleHooks = req => {
   const body = JSON.parse(req.body);
   const type = req.headers['x-github-event'];
-  console.log('Github webhook - ', type);
+  // console.log('Github webhook - ', type);
   switch (type) {
     case 'push':
-      console.log('handle push');
       _.each(body.commits, async commit => {
-        const taskId = findTaskId(commit.message);
+        const {
+          message,
+          url,
+          committer: { name }
+        } = commit;
+        const taskId = findTaskId(message);
         if (taskId) {
-          const asanaTask = await searchTask(taskId);
-          console.log('asanaTask', asanaTask);
+          const response = await searchTask(taskId);
+          _.each(response.data, ({ gid }) => {
+            addCommentToTask({
+              gid,
+              htmlText: `<body>GitHub commit by <em>${name}</em><ul><li>${message}</li><li><a href='${url}'></a></li></ul></body>`
+            });
+          });
         }
-        console.log('taskId', findTaskId(commit.message));
       });
       break;
     case 'pull_request':
