@@ -18,7 +18,8 @@ export const createHook = async () => {
     owner: 'yoongfook',
     repo: 'featureready',
     config: {
-      url: `${process.env.BASE_URL}/webhooks/github`
+      url: `${process.env.BASE_URL}/webhooks/github`,
+      secret: process.env.GITHUB_WEBHOOK_SECRET
     },
     events: ['push', 'pull_request', 'deployment_status']
   });
