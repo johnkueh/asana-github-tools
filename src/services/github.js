@@ -2,7 +2,14 @@ import 'dotenv/config';
 import _ from 'lodash';
 import Octokit from '@octokit/rest';
 import crypto from 'crypto';
-import { searchTask, addCommentToTask } from './asana';
+import {
+  getTask,
+  searchTask,
+  addCommentToTask,
+  getCustomField,
+  getCustomFieldOption,
+  client
+} from './asana';
 
 const octokit = new Octokit({
   auth: `token ${process.env.GITHUB_PATOKEN}`
@@ -46,26 +53,10 @@ export const handleHooks = req => {
   // console.log('Github webhook - ', type);
   switch (type) {
     case 'push':
-      _.each(body.commits, async commit => {
-        const {
-          message,
-          url,
-          committer: { name }
-        } = commit;
-        const taskId = findTaskId(message);
-        if (taskId) {
-          const response = await searchTask(taskId);
-          _.each(response.data, ({ gid }) => {
-            addCommentToTask({
-              gid,
-              htmlText: `<body>GitHub commit by <em>${name}</em><ul><li>${message}</li><li><a href='${url}'></a></li></ul></body>`
-            });
-          });
-        }
-      });
+      handleCommit(body);
       break;
     case 'pull_request':
-      console.log('handle PR');
+      handlePullRequest(body);
       break;
     case 'deployment_status':
       console.log('handle deploy');
@@ -73,6 +64,74 @@ export const handleHooks = req => {
     default:
       console.log('unrecognized event');
   }
+};
+
+export const handleCommit = async ({ commits }) => {
+  _.each(commits, async commit => {
+    const {
+      message,
+      url,
+      committer: { name }
+    } = commit;
+    const taskId = findTaskId(message);
+    if (taskId) {
+      const response = await searchTask(taskId);
+      _.each(response.data, ({ gid }) => {
+        addCommentToTask({
+          gid,
+          htmlText: `<body><strong>GitHub Commit</strong> by <em>${name}</em><ul><li>${message}</li><li><a href='${url}'></a></li></ul></body>`
+        });
+      });
+    }
+  });
+};
+
+export const handlePullRequest = async ({
+  action,
+  number,
+  pull_request: {
+    title,
+    user: { login },
+    html_url: url
+  }
+}) => {
+  const taskId = findTaskId(title);
+  if (taskId) {
+    const response = await searchTask(taskId);
+    _.each(response.data, task => {
+      const { gid } = task;
+      switch (action) {
+        case 'opened':
+          addCommentToTask({
+            gid,
+            htmlText: `<body><strong>GitHub PR #${number}</strong> opened by <em>${login}</em><ul><li>${title}</li><li><a href='${url}'></a></li></ul></body>`
+          });
+          setStage({
+            stage: 'Review',
+            task
+          });
+          break;
+        case 'edited':
+          break;
+        default:
+      }
+    });
+  }
+};
+
+const setStage = async ({ stage, task: searchedTask }) => {
+  const { gid, custom_fields: customFields } = await getTask(searchedTask.gid);
+  const customField = await getCustomField(customFields);
+  const customFieldOption = getCustomFieldOption({
+    name: stage,
+    field: customField
+  });
+
+  client.tasks.update(gid, {
+    custom_fields: {
+      [customField.gid]: customFieldOption.gid
+    }
+  });
 };
 
 export const verifyGitHub = req => {
