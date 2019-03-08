@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import bodyParser from 'body-parser';
 import { handleHooks as handleAsanaHooks } from './services/asana';
-import { handleHooks as handleGithubHooks } from './services/github';
+import { handleHooks as handleGithubHooks, verifyGitHub } from './services/github';
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -22,8 +22,12 @@ app.post('/webhooks/asana', (req, res) => {
 });
 
 app.post('/webhooks/github', (req, res) => {
-  handleGithubHooks(req);
-  res.sendStatus(200);
+  if (verifyGitHub(req)) {
+    handleGithubHooks(req);
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(401);
+  }
 });
 
 app.listen({ port: PORT }, () => {
