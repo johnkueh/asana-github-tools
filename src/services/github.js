@@ -23,6 +23,15 @@ export const listHooks = async () => {
   console.log(data);
 };
 
+export const listCommits = async number => {
+  const res = await octokit.pulls.listCommits({
+    owner: process.env.GITHUB_OWNER_NAME,
+    repo: process.env.GITHUB_REPO_NAME,
+    number
+  });
+  return res.data;
+};
+
 export const createHook = async () => {
   const result = await octokit.repos.createHook({
     owner: process.env.GITHUB_OWNER_NAME,
@@ -66,7 +75,16 @@ export const handleHooks = req => {
   }
 };
 
-export const handleCommit = async ({ commits }) => {
+export const handleCommit = async ({ ref, commits }) => {
+  // Dont handle direct commits / merges to the production and staging branches
+  const excludedRefs = _.map(
+    [process.env.PRODUCTION_BRANCH_NAME, process.env.STAGING_BRANCH_NAME],
+    name => `/refs/heads/${name}`
+  );
+  if (_.includes(excludedRefs, ref)) {
+    return;
+  }
+
   _.each(commits, async commit => {
     const {
       message,
@@ -91,32 +109,55 @@ export const handlePullRequest = async ({
   number,
   pull_request: {
     title,
+    merged,
     user: { login },
-    html_url: url
+    html_url: url,
+    base: { ref: baseRef },
+    head: { ref: headRef }
   }
 }) => {
-  const taskId = findTaskId(title);
-  if (taskId) {
+  const collection = await listCommits(number);
+  const associatedTasks = _.compact(
+    _.uniq(_.map(collection, ({ commit: { message } }) => findTaskId(message)))
+  );
+  _.each(associatedTasks, async taskId => {
     const response = await searchTask(taskId);
     _.each(response.data, task => {
-      const { gid } = task;
       switch (action) {
         case 'opened':
           addCommentToTask({
-            gid,
-            htmlText: `<body><strong>GitHub PR #${number}</strong> opened by <em>${login}</em><ul><li>${title}</li><li><a href='${url}'></a></li></ul></body>`
+            gid: task.gid,
+            htmlText: `<body><strong>GitHub PR #${number} / Opened 💬</strong> (${headRef} ➡️ ${baseRef}) by <em>${login}</em><ul><li>${title}</li><li><a href='${url}'></a></li></ul></body>`
           });
           setStage({
             stage: 'Review',
             task
           });
           break;
-        case 'edited':
+        case 'closed':
+          if (merged) {
+            addCommentToTask({
+              gid: task.gid,
+              htmlText: `<body><strong>GitHub PR #${number} / Merged ✅</strong> (${headRef} ➡️ ${baseRef}) by <em>${login}</em><ul><li>${title}</li><li><a href='${url}'></a></li></ul></body>`
+            });
+          }
+          if (baseRef === process.env.STAGING_BRANCH_NAME) {
+            setStage({
+              stage: 'Staging',
+              task
+            });
+          }
+          if (baseRef === process.env.PRODUCTION_BRANCH_NAME) {
+            setStage({
+              stage: 'Production',
+              task
+            });
+          }
           break;
         default:
       }
     });
-  }
+  });
 };
 
 const setStage = async ({ stage, task: searchedTask }) => {
