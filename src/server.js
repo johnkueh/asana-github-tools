@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import bodyParser from 'body-parser';
-import { handleHooks } from './services/asana';
+import { handleHooks as handleAsanaHooks } from './services/asana';
+import { handleHooks as handleGithubHooks } from './services/github';
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -12,11 +13,16 @@ app.get('/', (req, res) => {
 });
 
 app.post('/webhooks/asana', (req, res) => {
-  handleHooks(req);
+  handleAsanaHooks(req);
 
   res.set({
     'x-hook-secret': req.headers['x-hook-secret']
   });
+  res.sendStatus(200);
+});
+
+app.post('/webhooks/github', (req, res) => {
+  handleGithubHooks(req);
   res.sendStatus(200);
 });
 
