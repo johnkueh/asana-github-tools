@@ -8,6 +8,7 @@
     "setup-custom-fields": "babel-node src/tasks/setupCustomFields.js",
     "list-hooks": "babel-node src/tasks/getHooks.js",
     "setup-hooks": "babel-node src/tasks/setupHooks.js",
+    "setup-github-hooks": "babel-node src/tasks/setupGithubHooks.js",
     "setup": "setup-tags && setup-hooks",
     "dev": "npm run tunnel & nodemon --exec babel-node src/server.js",
     "clean": "rm -rf build && mkdir build",
