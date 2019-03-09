@@ -75,15 +75,14 @@ export const handleHooks = req => {
   }
 };
 
+const excludedRefs = _.map(
+  [process.env.PRODUCTION_BRANCH_NAME, process.env.STAGING_BRANCH_NAME],
+  name => `refs/heads/${name}`
+);
+
 export const handleCommit = async ({ ref, commits }) => {
   // Dont handle direct commits / merges to the production and staging branches
-  const excludedRefs = _.map(
-    [process.env.PRODUCTION_BRANCH_NAME, process.env.STAGING_BRANCH_NAME],
-    name => `refs/heads/${name}`
-  );
-  if (_.includes(excludedRefs, ref)) {
-    return;
-  }
+  if (_.includes(excludedRefs, ref)) return;
 
   _.each(commits, async commit => {
     const {
@@ -94,7 +93,15 @@ export const handleCommit = async ({ ref, commits }) => {
     const taskId = findTaskId(message);
     if (taskId) {
       const response = await searchTask(taskId);
-      _.each(response.data, ({ gid }) => {
+      _.each(response.data, async searchedTask => {
+        const task = await getTask(searchedTask.gid);
+        const { gid, custom_fields: customFields } = task;
+        const {
+          enum_value: { name: stage }
+        } = await getCustomField(customFields);
+        if (stage === 'Draft') {
+          setStage({ stage: 'In Progress', task });
+        }
         addCommentToTask({
           gid,
           htmlText: `<body><strong>GitHub Commit</strong> by <em>${name}</em><ul><li>${message}</li><li><a href='${url}'></a></li></ul></body>`
