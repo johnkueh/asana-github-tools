@@ -27,6 +27,7 @@ export const setupCustomFields = async () => {
     description: 'The current stage of this feature',
     enum_options: [
       { name: 'Draft', color: 'cool-gray' },
+      { name: 'In Progress', color: 'aqua' },
       { name: 'Review', color: 'yellow' },
       { name: 'Approved', color: 'green' },
       { name: 'Staging', color: 'magenta' },
