@@ -41,7 +41,7 @@ export const createHook = async () => {
       url: `${process.env.BASE_URL}/webhooks/github`,
       secret: process.env.GITHUB_WEBHOOK_SECRET
     },
-    events: ['push', 'pull_request', 'deployment_status']
+    events: ['push', 'pull_request', 'pull_request_review', 'deployment_status']
   });
 
   console.log(result);
