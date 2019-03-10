@@ -67,6 +67,9 @@ export const handleHooks = req => {
     case 'pull_request':
       handlePullRequest(body);
       break;
+    case 'pull_request_review':
+      handlePullRequestReview(body);
+      break;
     case 'deployment_status':
       console.log('handle deploy');
       break;
@@ -111,6 +114,11 @@ export const handleCommit = async ({ ref, commits }) => {
   });
 };
 
+const getTaskIdsFromPullRequest = async number => {
+  const collection = await listCommits(number);
+  return _.compact(_.uniq(_.map(collection, ({ commit: { message } }) => findTaskId(message))));
+};
+
 export const handlePullRequest = async ({
   action,
   number,
@@ -145,7 +153,7 @@ export const handlePullRequest = async ({
           if (merged) {
             addCommentToTask({
               gid: task.gid,
-              htmlText: `<body><strong>GitHub PR #${number} / Merged ✅</strong> (${headRef} ➡️ ${baseRef}) by <em>${login}</em><ul><li>${title}</li><li><a href='${url}'></a></li></ul></body>`
+              htmlText: `<body><strong>GitHub PR #${number} / Merged 🏆</strong> (${headRef} ➡️ ${baseRef}) by <em>${login}</em><ul><li>${title}</li><li><a href='${url}'></a></li></ul></body>`
             });
           }
           if (baseRef === process.env.STAGING_BRANCH_NAME) {
@@ -165,6 +173,38 @@ export const handlePullRequest = async ({
       }
     });
   });
+};
+
+export const handlePullRequestReview = async ({
+  action,
+  pull_request: {
+    number,
+    title,
+    html_url: url,
+    head: { ref: headRef },
+    base: { ref: baseRef }
+  },
+  review: {
+    user: { login },
+    state
+  }
+}) => {
+  if (action === 'submitted' && state === 'approved') {
+    const taskIds = await getTaskIdsFromPullRequest(number);
+    _.each(taskIds, async taskId => {
+      const response = await searchTask(taskId);
+      _.each(response.data, task => {
+        addCommentToTask({
+          gid: task.gid,
+          htmlText: `<body><strong>GitHub PR #${number} / Approved ✅</strong> (${headRef} ➡️ ${baseRef}) by <em>${login}</em><ul><li>${title}</li><li><a href='${url}'></a></li></ul></body>`
+        });
+        setStage({
+          stage: 'Approved',
+          task
+        });
+      });
+    });
+  }
 };
 
 const setStage = async ({ stage, task: searchedTask }) => {
