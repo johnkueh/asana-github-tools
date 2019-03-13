@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import Asana from 'asana';
 import _ from 'lodash';
+import { findTaskId } from '../helpers/tasks';
 
 export const client = Asana.Client.create().useAccessToken(process.env.ASANA_PATOKEN);
 
@@ -144,12 +145,14 @@ export const handleTaskCreated = async ({ gid, number }) => {
   const field = _.find(task.custom_fields, { name: process.env.ASANA_CUSTOM_FIELD_NAME });
   const { enum_options: enumOptions, enum_value: enumValue, gid: customFieldGid } = field;
   const draftOption = _.find(enumOptions, { name: 'Draft' });
+  const taskId = findTaskId(name);
 
-  // Update with 'Draft' stage
-  await client.tasks.update(gid, {
-    name: updatedName,
-    custom_fields: {
-      [customFieldGid]: draftOption.gid
-    }
-  });
+  if (!taskId) {
+    await client.tasks.update(gid, {
+      name: updatedName,
+      custom_fields: {
+        [customFieldGid]: draftOption.gid
+      }
+    });
+  }
 };
