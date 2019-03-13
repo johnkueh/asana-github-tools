@@ -140,14 +140,19 @@ export const getCustomFieldOption = ({ name, field }) => {
 
 export const handleTaskCreated = async ({ gid, number }) => {
   const task = await getTask(gid);
-  const { name } = task;
+  const { name, followers } = task;
+
+  const users = process.env.ASANA_ACTIVE_USERS.split(', ');
+  const followerNames = _.map(followers, 'name');
+  const activeFollowers = _.intersection(users, followerNames);
+
   const updatedName = `[${process.env.ASANA_PROJECT_PREFIX}-${number}] ${name}`;
   const field = _.find(task.custom_fields, { name: process.env.ASANA_CUSTOM_FIELD_NAME });
   const { enum_options: enumOptions, enum_value: enumValue, gid: customFieldGid } = field;
   const draftOption = _.find(enumOptions, { name: 'Draft' });
   const taskId = findTaskId(name);
 
-  if (!taskId) {
+  if (!taskId && !_.isEmpty(activeFollowers)) {
     await client.tasks.update(gid, {
       name: updatedName,
       custom_fields: {
