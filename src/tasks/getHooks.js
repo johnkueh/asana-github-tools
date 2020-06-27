@@ -18,4 +18,3 @@ getHooks()
     console.error('additional info : ', JSON.stringify(rest));
     console.error('---');
   });
-});
