@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import _ from 'lodash';
-import { Octokit } from '@octokit/rest';
 import crypto from 'crypto';
 import {
   getTask,
@@ -10,6 +9,8 @@ import {
   getCustomFieldOption,
   client
 } from './asana';
+
+const { Octokit } = require('@octokit/rest');
 
 const octokit = new Octokit({
   auth: `token ${process.env.GITHUB_PATOKEN}`
