@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import _ from 'lodash';
-import Octokit from '@octokit/rest';
+import { Octokit } from '@octokit/rest';
 import crypto from 'crypto';
 import {
   getTask,
